@@ -13,12 +13,9 @@ import { GrPowerReset } from "react-icons/gr";
 
 const index = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  const [isDrawing, setIsDrawing] = useState<Boolean>(false);
-
-  const [color, setColor] = useState("white");
-
-  const [reset, setReset] = useState(false);
+  const [isDrawing, setIsDrawing] = useState<boolean>(false);
+  const [color, setColor] = useState<string>("white");
+  const [reset, setReset] = useState<boolean>(false);
 
   useEffect(() => {
     if (reset) {
@@ -40,16 +37,35 @@ const index = () => {
     }
   }, []);
 
-  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
+  const getCoordinates = (
+    e: MouseEvent | TouchEvent
+  ): { x: number; y: number } => {
+    if (
+      e.type === "mousedown" ||
+      e.type === "mousemove" ||
+      e.type === "mouseup"
+    ) {
+      return { x: (e as MouseEvent).clientX, y: (e as MouseEvent).clientY };
+    } else {
+      return {
+        x: (e as TouchEvent).touches[0].clientX,
+        y: (e as TouchEvent).touches[0].clientY,
+      };
+    }
+  };
 
+  const startDrawing = (
+    e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>
+  ) => {
+    const canvas = canvasRef.current;
     if (canvas) {
-      canvas.style.background = "black";
       const context = canvas.getContext("2d");
+      const { x, y } = getCoordinates(e.nativeEvent);
 
       if (context) {
+        canvas.style.background = "black";
         context.beginPath();
-        context.moveTo(e.nativeEvent.clientX, e.nativeEvent.clientY);
+        context.moveTo(x, y);
         setIsDrawing(true);
       }
     }
@@ -59,17 +75,19 @@ const index = () => {
     setIsDrawing(false);
   };
 
-  const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!isDrawing) {
-      return;
-    }
+  const draw = (
+    e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>
+  ) => {
+    if (!isDrawing) return;
+
     const canvas = canvasRef.current;
     if (canvas) {
       const context = canvas.getContext("2d");
+      const { x, y } = getCoordinates(e.nativeEvent);
 
       if (context) {
         context.strokeStyle = color;
-        context.lineTo(e.nativeEvent.clientX, e.nativeEvent.clientY);
+        context.lineTo(x, y);
         context.stroke();
       }
     }
@@ -79,7 +97,6 @@ const index = () => {
     const canvas = canvasRef.current;
     if (canvas) {
       const context = canvas.getContext("2d");
-
       if (context) {
         context.clearRect(0, 0, canvas.width, canvas.height);
       }
@@ -97,14 +114,12 @@ const index = () => {
       if (newContext) {
         newContext.fillStyle = "black";
         newContext.fillRect(0, 0, newCanvas.width, newCanvas.height);
-
-        // Draw the existing canvas content over the new background
         newContext.drawImage(canvas, 0, 0);
 
-        // Trigger the download of the new canvas
         const link = document.createElement("a");
         link.href = newCanvas.toDataURL("image/png");
-        const imageName = prompt("Enter the image name to download ? ");
+        const imageName =
+          prompt("Enter the image name to download? ") || "drawing";
         link.download = `${imageName}.png`;
         link.click();
       }
@@ -170,6 +185,9 @@ const index = () => {
         onMouseUp={stopDrawing}
         onMouseOut={stopDrawing}
         onMouseMove={draw}
+        onTouchStart={startDrawing} // Touch events for mobile
+        onTouchEnd={stopDrawing}
+        onTouchMove={draw}
       />
     </>
   );
