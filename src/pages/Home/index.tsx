@@ -37,6 +37,19 @@ const index = () => {
     }
   }, []);
 
+  useEffect(() => {
+    const handleUnload = (e: any) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+
+    window.addEventListener("beforeunload", handleUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleUnload);
+    };
+  }, []);
+
   const getCoordinates = (
     e: MouseEvent | TouchEvent
   ): { x: number; y: number } => {
@@ -148,7 +161,7 @@ const index = () => {
             </Tooltip>
           </TooltipProvider>
         </div>
-        <Group className="z-20 gap-2 mx-auto flex flex-wrap">
+        <Group className="z-20 gap-2 mt-8 mx-auto flex flex-wrap">
           {colors.map((color: string) => (
             <ColorSwatch
               onClick={() => setColor(color)}
