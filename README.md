@@ -72,5 +72,3 @@ If you want to contribute to this project:
 This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for more information.
 
 ---
-
-Feel free to update any sections as needed!
