@@ -1,7 +1,3 @@
-Here's the updated `README.md` file for your **DrawingApp** repository:
-
----
-
 # DrawingApp
 
 **DrawingApp** is a web-based drawing application built with **React**, **Vite**, and **TypeScript**. It enables users to create drawings using different color options and download their artwork as an image file. The application is developed with a focus on **type safety** using TypeScript, ensuring robust and maintainable code.
