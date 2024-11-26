@@ -140,8 +140,8 @@ const index = () => {
   };
 
   return (
-    <>
-      <div className="grid grid-cols-3 gap-4 items-center justify-center mx-auto mt-2">
+    <div className="relative min-w-screen min-h-screen overflow-hidden">
+      <div className="grid grid-cols-3 -top-6 w-screen fixed z-50 gap-4 items-center justify-center mx-auto mt-2">
         <div className="z-40 mx-auto">
           <TooltipProvider>
             <Tooltip>
@@ -165,7 +165,9 @@ const index = () => {
           {colors.map((color: string) => (
             <ColorSwatch
               onClick={() => setColor(color)}
-              className={`cursor-pointer`}
+              className={`cursor-pointer ${
+                color === color ? "border-2 border-zinc-800 rounded" : ""
+              }`}
               color={color}
               key={color}
             />
@@ -202,7 +204,7 @@ const index = () => {
         onTouchEnd={stopDrawing}
         onTouchMove={draw}
       />
-    </>
+    </div>
   );
 };
 
